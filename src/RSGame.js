@@ -169,42 +169,23 @@ class RSGame {
     return [];
   }
 
+  _isValidPosition({row, col}, board) {
+    let rowValid = row >= 0 && row < board.length;
+    let colValid = col >= 0 && col < board[0].length;
+    return rowValid && colValid;
+  }
+
   // given a cell position {row, col} and a 2D array (either minefield or fog)
   // returns the neighboring cells as an array of cell positions
   _getNeighboringCells({row, col}, board) {
-    // initialize result
     let result = [];
-    if (row - 1 >= 0) {
-      // top neighbor
-      result.push({row: row - 1, col});
-      // topleft
-      if (col - 1 >= 0) {
-        result.push({row: row - 1, col: col - 1});
+    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+      for (let colOffset = -1; colOffset <= 1; colOffset++) {
+        let neighbor = {row: row + rowOffset, col: col + colOffset};
+        if (this._isValidPosition(neighbor, board)) {
+          result.push(neighbor);
+        }
       }
-      // topright
-      if (col + 1 < board[0].length) {
-        result.push({row: row - 1, col: col + 1});
-      }
-    }
-    if (row + 1 < board.length) {
-      // add bottom
-      result.push({row: row + 1, col});
-      // add bottomleft
-      if (col - 1 >= 0) {
-        result.push({row: row + 1, col: col - 1});
-      }
-      // add bottomright
-      if (col + 1 < board[0].length) {
-        result.push({row: row + 1, col: col + 1});
-      }
-    }
-    // add right neighbor
-    if (col + 1 < board[0].length) {
-      result.push({row, col: col + 1});
-    }
-    // add left neighbor
-    if (col - 1 >= 0) {
-      result.push({row, col: col - 1});
     }
     return result;
   }
