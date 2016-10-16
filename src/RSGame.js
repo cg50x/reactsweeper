@@ -157,7 +157,12 @@ class RSGame {
     - helper recursive function?
   */
   _getCellsToReveal({row, col}) {
-    return this._getCellsToRevealHelper({row, col}, {});
+    // initialize visited cells to all false
+    let totalRows = this._state.minefield.length;
+    let totalCols = this._state.minefield[0].length;
+    let visitedCells = Array(totalRows).fill()
+      .map(() => Array(totalCols).fill());
+    return this._getCellsToRevealHelper({row, col}, visitedCells);
   }
 
   // helper
@@ -178,6 +183,7 @@ class RSGame {
     } else if (currentCell === RSGame.EMPTY_CELL) {
       // get unvisited neighbors
       let neighbors = this._getNeighboringCells({row, col}, this._state.minefield);
+      // console.log('neighbors', neighbors);
       let unvisitedNeighbors = neighbors.filter(({row, col}) => {
         return !visitedCells[row][col];
       });
@@ -232,10 +238,12 @@ class RSGame {
 }
 
 // Static Fields
+// Mine field constants
 RSGame.EMPTY_CELL = null;
 RSGame.MINE_CELL = 'x';
 RSGame.HOT_MINE_CELL = 'X';
 
+// Fog constants
 RSGame.HIDDEN_CELL = 0;
 RSGame.REVEALED_CELL = 1;
 RSGame.FLAGGED_CELL = 2;

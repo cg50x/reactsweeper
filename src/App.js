@@ -9,27 +9,46 @@ class App extends Component {
     super();
     this._game = new RSGame({rows: 10, cols: 10});
   }
-  //  cell states: 'flag' || 'hidden' || 'empty' || 'mine' || 'hot mine'
+  
+  onCellClick({rowIndex, colIndex}) {
+    this._game.revealPosition({row: rowIndex, col: colIndex});
+    // TODO the click should be calling set state
+    // Need to change the code so that all render functions only
+    // read from state or props. may need to put renderCell and renderRow
+    // into their own components.
+    this.forceUpdate();
+  }
+
   renderCell({rowIndex, colIndex}) {
     let contents = null;
     let cellStyle = {};
 
     // Only rendering based on minefield now
-    let gameState = this._game.getState();
-    let minefield = gameState.minefield;
-    let cellValue = minefield[rowIndex][colIndex];
+    let {minefield, fog} = this._game.getState();
+    let minefieldValue = minefield[rowIndex][colIndex];
+    let fogValue = fog[rowIndex][colIndex];
 
-    if (cellValue === RSGame.MINE_CELL) {
-      contents = <img src={logo} role="presentation"/>
-    } else if (cellValue === RSGame.HOT_MINE_CELL) {
-      contents = <img src={logo} role="presentation"/>
-      cellStyle.backgroundColor = 'red';
-    } else if (typeof cellValue === 'number') {
-      contents = <span>{cellValue}</span>;
+    if (fogValue === RSGame.HIDDEN_CELL) {
+      cellStyle.backgroundColor = '#ccc';
+    } else if (fogValue === RSGame.FLAGGED_CELL) {
+      cellStyle.backgroundColor = '#ccc';
       cellStyle.color = 'black';
+      contents = <span>flag</span>
+    } else if (fogValue === RSGame.REVEALED_CELL) {
+      if (minefieldValue === RSGame.MINE_CELL) {
+        contents = <img src={logo} role="presentation"/>
+      } else if (minefieldValue === RSGame.HOT_MINE_CELL) {
+        contents = <img src={logo} role="presentation"/>
+        cellStyle.backgroundColor = 'red';
+      } else if (typeof minefieldValue === 'number') {
+        contents = <span>{minefieldValue}</span>;
+        cellStyle.color = 'black';
+      }
     }
+    
     return (
       <td
+        onClick={this.onCellClick.bind(this, {rowIndex, colIndex})}
         className="Reactsweeper-cell"
         style={cellStyle}
         key={ colIndex }>
