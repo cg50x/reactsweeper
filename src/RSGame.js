@@ -25,7 +25,7 @@ class RSGame {
     });
     // if revealing a mine cell, convert it to a hot mine
     if (this._state.minefield[row][col] === RSGame.MINE_CELL) {
-      this._state.minefield[row][col] === RSGame.HOT_MINE;
+      this._state.minefield[row][col] = RSGame.HOT_MINE_CELL;
     }
     return this._state;
   }
@@ -168,14 +168,14 @@ class RSGame {
     visitedCells[row] = visitedCells[row] || {};
     visitedCells[row][col] = true;
 
-    let currentCell = this._state.minefield[row, col];
+    let currentCell = this._state.minefield[row][col];
     if (typeof currentCell === 'number') {
       return [{row, col}];
     } else if (currentCell === RSGame.MINE_CELL) {
       return this._getAllMinePositions();
-    } else if (currentCell === RSGame.HOT_MINE) {
+    } else if (currentCell === RSGame.HOT_MINE_CELL) {
       return [];
-    } else if (currentCell == RSGame.EMPTY_CELL) {
+    } else if (currentCell === RSGame.EMPTY_CELL) {
       // get unvisited neighbors
       let neighbors = this._getNeighboringCells({row, col}, this._state.minefield);
       let unvisitedNeighbors = neighbors.filter(({row, col}) => {
@@ -234,7 +234,7 @@ class RSGame {
 // Static Fields
 RSGame.EMPTY_CELL = null;
 RSGame.MINE_CELL = 'x';
-RSGame.HOT_MINE = 'X';
+RSGame.HOT_MINE_CELL = 'X';
 
 RSGame.HIDDEN_CELL = 0;
 RSGame.REVEALED_CELL = 1;
@@ -245,31 +245,3 @@ RSGame.PLAYER_LOST = 1;
 RSGame.PLAYER_WON = 2;
 
 export default RSGame;
-/*
-minefield:
-[
-  [, 1, -1, ],
-  [],
-  [],
-  [],
-  [],
-  []
-]
-
-null = empty cell
-'x' = mine
-'X' = hot mine
-1-8 = numbered cell
-
-fog:
-0 = hidden cell
-1 = revealed cell
-2 = flagged cell
-
-{
-  revealedCells: {}
-  flaggedCells: {}
-  mineCells: {}
-  numberedCells: {}
-}
-*/

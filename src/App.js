@@ -2,30 +2,31 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import RSGame from './RSGame';
+
 class App extends Component {
+  constructor () {
+    super();
+    this._game = new RSGame({rows: 10, cols: 10});
+  }
   //  cell states: 'flag' || 'hidden' || 'empty' || 'mine' || 'hot mine'
-  renderCell({cellState, colIndex}) {
+  renderCell({rowIndex, colIndex}) {
     let contents = null;
     let cellStyle = {};
 
-    switch (cellState) {
-      case 'mine':
-        contents = <img src={logo} role="presentation"/>
-        break;
-      case 'hot mine':
-        contents = <img src={logo} role="presentation"/>
-        cellStyle.backgroundColor = 'red';
-        break;
-      case 'hidden':
-        cellStyle.backgroundColor = 'blue';
-        break;
-      case 'flag':
-        contents = 'flag';
-        cellStyle.color = 'black';
-        cellStyle.backgroundColor = 'blue';
-        break;
-      case 'empty':
-      default:
+    // Only rendering based on minefield now
+    let gameState = this._game.getState();
+    let minefield = gameState.minefield;
+    let cellValue = minefield[rowIndex][colIndex];
+
+    if (cellValue === RSGame.MINE_CELL) {
+      contents = <img src={logo} role="presentation"/>
+    } else if (cellValue === RSGame.HOT_MINE_CELL) {
+      contents = <img src={logo} role="presentation"/>
+      cellStyle.backgroundColor = 'red';
+    } else if (typeof cellValue === 'number') {
+      contents = <span>{cellValue}</span>;
+      cellStyle.color = 'black';
     }
     return (
       <td
@@ -37,23 +38,9 @@ class App extends Component {
     );
   }
 
-  renderRow({ numRows, numCols, rowIndex }) {
-    let cells = Array(numCols).fill();
-    cells = cells.map((val, colIndex) => {
-      let cellType = '';
-      let rand = Math.random();
-      if (rand <= .2) {
-        cellType = 'mine';
-      } else if (rand <= .4) {
-        cellType = 'hot mine';
-      } else if (rand <= .6) {
-        cellType = 'hidden';
-      } else if (rand <= .8) {
-        cellType = 'flag';
-      } else {
-        cellType = 'empty';
-      }
-      return this.renderCell({cellType, colIndex});
+  renderRow({row, rowIndex }) {
+    let cells = row.map((cellValue, colIndex) => {
+      return this.renderCell({rowIndex, colIndex});
     });
     return (
       <tr className="Reactsweeper-row" key={rowIndex}>
@@ -63,11 +50,10 @@ class App extends Component {
   }
 
   renderGrid() {
-    let numRows = 10;
-    let numCols = 10;
-    let rows = Array(10).fill();
-    rows = rows.map((val, rowIndex) => {
-      return this.renderRow({ numRows, numCols, rowIndex });
+    let gameState = this._game.getState();
+    let minefield = gameState.minefield;
+    let rows = minefield.map((row, rowIndex) => {
+      return this.renderRow({ row, rowIndex });
     });
     return (
       <table className="Reactsweeper-grid">
