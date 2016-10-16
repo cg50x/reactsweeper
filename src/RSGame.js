@@ -92,15 +92,15 @@ class RSGame {
   // Takes a minefield
   // Go through all of the cells in the minefield
   // if there is a mine,
-  // - get all surrounding cells
-  // - convert all surrounding cells into numbers if not already numbers
-  // - increment the count in all the surrounding cells
+  // - get all neighbor cells
+  // - convert all neighbor cells into numbers if not already numbers
+  // - increment the count in all the neighbor cells
   _addNumbersToMinefield(minefield) {
     for (let row = 0; row < minefield.length; row++) {
       for (let col = 0; col < minefield[0].length; col++) {
         if (minefield[row][col] === RSGame.MINE_CELL) {
-          let surroundingCells = this._getSurroundingCells({row, col}, minefield);
-          surroundingCells.forEach(({row, col}) => {
+          let neighbors = this._getNeighboringCells({row, col}, minefield);
+          neighbors.forEach(({row, col}) => {
             if (minefield[row][col] !== RSGame.MINE_CELL) {
               let cellVal = minefield[row][col];
               if (typeof cellVal !== 'number') {
@@ -116,35 +116,6 @@ class RSGame {
     return minefield;
   }
 
-  // getSurroundingCells
-  // returns an array of {row, col}
-  // returns an array of all cells that surround the given cell and are within
-  // the board's boundaries
-  _getSurroundingCells({row, col}, board) {
-    // init results with neighboring cells (top, right, bottom, left)
-    let results = this._getNeighboringCells({row, col}, board);
-    if (row - 1 >= 0) {
-      // topleft
-      if (col - 1 >= 0) {
-      results.push({row: row - 1, col: col - 1});
-      }
-      // topright
-      if (col + 1 < board[0].length) {
-        results.push({row: row - 1, col: col + 1});
-      }  
-    }
-    if (row + 1 < board.length) {
-      // add bottomleft
-      if (col - 1 >= 0) {
-        results.push({row: row + 1, col: col - 1});
-      }
-      //bottomright
-      if (col + 1 < board[0].length) {
-        results.push({row: row + 1, col: col + 1});
-      }
-    }
-    return results;
-  }
   /*
     Takes in a row, col position and returns a collection of cell positions {row, col}
     that should be revealed if the cell at (row, col) was clicked.
@@ -203,20 +174,35 @@ class RSGame {
   _getNeighboringCells({row, col}, board) {
     // initialize result
     let result = [];
-    // try to retrieve top neighbor (if neighbor within bounds, add it to the results)
     if (row - 1 >= 0) {
+      // top neighbor
       result.push({row: row - 1, col});
+      // topleft
+      if (col - 1 >= 0) {
+        result.push({row: row - 1, col: col - 1});
+      }
+      // topright
+      if (col + 1 < board[0].length) {
+        result.push({row: row - 1, col: col + 1});
+      }
     }
-    // try to retrieve right neighbor
-    // assumes that the board has at least one row
+    if (row + 1 < board.length) {
+      // add bottom
+      result.push({row: row + 1, col});
+      // add bottomleft
+      if (col - 1 >= 0) {
+        result.push({row: row + 1, col: col - 1});
+      }
+      // add bottomright
+      if (col + 1 < board[0].length) {
+        result.push({row: row + 1, col: col + 1});
+      }
+    }
+    // add right neighbor
     if (col + 1 < board[0].length) {
       result.push({row, col: col + 1});
     }
-    // try to retrieve bottom neighbor
-    if (row + 1 < board.length) {
-      result.push({row: row + 1, col});
-    }
-    // try to retrieve left neighbor
+    // add left neighbor
     if (col - 1 >= 0) {
       result.push({row, col: col - 1});
     }
