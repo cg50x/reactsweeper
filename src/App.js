@@ -10,10 +10,10 @@ class App extends Component {
 
     switch (cellState) {
       case 'mine':
-        contents = <img src={logo} />
+        contents = <img src={logo} role="presentation"/>
         break;
       case 'hot mine':
-        contents = <img src={logo} />
+        contents = <img src={logo} role="presentation"/>
         cellStyle.backgroundColor = 'red';
         break;
       case 'hidden':
