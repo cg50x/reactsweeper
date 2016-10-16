@@ -35,11 +35,18 @@ class RSGame {
   // returns false if not a valid move
   // if x,y is already flagged, returns the game state
   toggleFlagPosition({row, col}) {
-    // TODO impl
     // if game state is finished, return game state
-    // if cell is not flagged and hidden, flag it and return game state
-    // if cell is already flagged, unflag it and return game state
-    // else return game state
+    let gameFinished = this._state.endgame !== RSGame.GAME_IN_PROGRESS;
+    if (gameFinished) {
+      return this._state;
+    }
+    let currCell = this._state.fog[row][col];
+    if (currCell === RSGame.HIDDEN_CELL) {
+      this._state.fog[row][col] = RSGame.FLAGGED_CELL;
+    } else if (currCell === RSGame.FLAGGED_CELL) {
+      this._state.fog[row][col] = RSGame.HIDDEN_CELL
+    }
+    return this._state;
   }
 
   _getInitialState({rows, cols}) {
