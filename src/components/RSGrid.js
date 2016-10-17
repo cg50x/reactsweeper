@@ -5,25 +5,30 @@ import RSGame from '../RSGame';
 
 class RSGrid extends Component {
   render() {
-  	let gameState = this.props.gameState;
-  	let rows = gameState.minefield.map((row, rowIndex) => {
-  	  return this._renderRow({
-  	  	row,
-  	  	rowIndex,
-  	  	gameState
-  	  });
-  	});
-  	return (
-  	  <table className="Reactsweeper-grid">
-  	    <tbody>
-  	      { rows }
-  	    </tbody>
-  	  </table>
-  	);
+    let gameState = this.props.gameState;
+    let rows = gameState.minefield.map((row, rowIndex) => {
+      return this._renderRow({
+        row,
+        rowIndex,
+        gameState
+      });
+    });
+    return (
+      <table className="Reactsweeper-grid">
+        <tbody>
+          { rows }
+        </tbody>
+      </table>
+    );
   }
 
   onCellClick({rowIndex, colIndex}) {
-  	return this.props.onCellClick({rowIndex, colIndex});
+    return this.props.onCellClick({rowIndex, colIndex});
+  }
+
+  onContextMenu({rowIndex, colIndex}, event) {
+    event.preventDefault();
+    return this.props.onCellRightClick({rowIndex, colIndex});
   }
 
   _renderRow({ row, rowIndex, gameState }) {
@@ -32,7 +37,7 @@ class RSGrid extends Component {
     });
     return (
       <tr className="Reactsweeper-row" key={rowIndex}>
-        { cells }
+        {cells}
       </tr>
     );
   }
@@ -59,7 +64,7 @@ class RSGrid extends Component {
         contents = <img src={logo} role="presentation"/>
         cellStyle.backgroundColor = 'red';
       } else if (typeof minefieldValue === 'number') {
-        contents = <span>{minefieldValue}</span>;
+        contents = <span>{ minefieldValue }</span>;
         cellStyle.color = 'black';
       }
     }
@@ -67,10 +72,11 @@ class RSGrid extends Component {
     return (
       <td
         onClick={this.onCellClick.bind(this, {rowIndex, colIndex})}
+        onContextMenu={this.onContextMenu.bind(this, {rowIndex, colIndex})}
         className="Reactsweeper-cell"
         style={cellStyle}
-        key={ colIndex }>
-        { contents }
+        key={colIndex}>
+        {contents}
       </td>
     );
   }

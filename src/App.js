@@ -9,29 +9,39 @@ class App extends Component {
   constructor () {
     super();
     this._game = new RSGame({rows: 10, cols: 10});
-    this._state = {
+    this.state = {
       gameState: this._game.getState()
     };
     this.onCellClick = this.onCellClick.bind(this);
+    this.onCellRightClick = this.onCellRightClick.bind(this);
   }
   
   onCellClick({rowIndex, colIndex}) {
     let gameState = this._game.revealPosition({row: rowIndex, col: colIndex});
-    this.setState({ gameState });
+    this.setState({gameState});
+  }
+
+  onCellRightClick({rowIndex, colIndex}) {
+    let gameState = this._game.toggleFlagPosition({row: rowIndex, col: colIndex});
+    this.setState({gameState});
   }
 
   render() {
-    let gameState = this._game.getState();
+    let gridStyle = {
+      marginLeft: 'auto',
+      marginRight: 'auto'
+    };
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to Reactsweeper</h2>
-          <RSGrid gameState={ gameState } onCellClick={ this.onCellClick }></RSGrid>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <RSGrid
+            gameState={this.state.gameState}
+            onCellClick={this.onCellClick}
+            onCellRightClick={this.onCellRightClick}
+          ></RSGrid>
       </div>
     );
   }

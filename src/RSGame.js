@@ -154,7 +154,6 @@ class RSGame {
     } else if (currentCell === RSGame.EMPTY_CELL) {
       // get unvisited neighbors
       let neighbors = this._getNeighboringCells({row, col}, this._state.minefield);
-      // console.log('neighbors', neighbors);
       let unvisitedNeighbors = neighbors.filter(({row, col}) => {
         return !visitedCells[row][col];
       });
