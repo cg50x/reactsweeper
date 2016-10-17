@@ -1,6 +1,6 @@
 # Reactsweeper
 
-This is a Minesweeper clone made with React. You can play a demo [here](https://chrisguevara.com/react-minesweeper).
+This is a Minesweeper clone made with React. You can play a demo [here](https://chrisguevara.com/reactsweeper).
 
 ## How to Run Locally
 
