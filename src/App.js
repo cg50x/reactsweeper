@@ -9,16 +9,15 @@ class App extends Component {
   constructor () {
     super();
     this._game = new RSGame({rows: 10, cols: 10});
+    this._state = {
+      gameState: this._game.getState()
+    };
     this.onCellClick = this.onCellClick.bind(this);
   }
   
   onCellClick({rowIndex, colIndex}) {
-    this._game.revealPosition({row: rowIndex, col: colIndex});
-    // TODO the click should be calling set state
-    // Need to change the code so that all render functions only
-    // read from state or props. may need to put renderCell and renderRow
-    // into their own components.
-    this.forceUpdate();
+    let gameState = this._game.revealPosition({row: rowIndex, col: colIndex});
+    this.setState({ gameState });
   }
 
   render() {
