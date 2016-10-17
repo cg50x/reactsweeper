@@ -29,6 +29,8 @@ class RSGame {
     if (this._state.minefield[row][col] === RSGame.MINE_CELL) {
       this._state.minefield[row][col] = RSGame.HOT_MINE_CELL;
       this._setPlayerLostEndgame();
+    } else if (this._playerHasWon()) {
+      this._setPlayerWonEndgame();
     }
     return this._state;
   }
@@ -203,6 +205,26 @@ class RSGame {
       }
     }
     return results;
+  }
+
+  _getAllRevealedPositions() {
+    let results = [];
+    let fog = this._state.fog;
+    for (let row = 0; row < fog.length; row++) {
+      for (let col = 0; col < fog.length; col++) {
+        if (fog[row][col] === RSGame.REVEALED_CELL) {
+          results.push({row, col});
+        }
+      }
+    }
+    return results;
+  }
+
+  _playerHasWon() {
+    let mines = this._getAllMinePositions();
+    let revealed = this._getAllRevealedPositions();
+    let totalCells = this._state.minefield.length * this._state.minefield[0].length;
+    return mines.length === (totalCells - revealed.length);
   }
 
   _setPlayerLostEndgame() {
