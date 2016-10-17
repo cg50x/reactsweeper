@@ -1,6 +1,8 @@
 class RSGame {
-  constructor({ rows, cols }) {
+  constructor({ rows, cols, onPlayerLost, onPlayerWon }) {
     this._state = this._getInitialState({ rows, cols });
+    this.onPlayerLost = onPlayerLost;
+    this.onPlayerWon = onPlayerWon;
   }
 
   getState() {
@@ -23,9 +25,10 @@ class RSGame {
     cellsToReveal.forEach(({row, col}) => {
       this._state.fog[row][col] = RSGame.REVEALED_CELL;
     });
-    // if revealing a mine cell, convert it to a hot mine
+    // if revealing a mine cell, convert it to a hot mine and end the game
     if (this._state.minefield[row][col] === RSGame.MINE_CELL) {
       this._state.minefield[row][col] = RSGame.HOT_MINE_CELL;
+      this._setPlayerLostEndgame();
     }
     return this._state;
   }
@@ -200,6 +203,20 @@ class RSGame {
       }
     }
     return results;
+  }
+
+  _setPlayerLostEndgame() {
+    this._state.endgame = RSGame.PLAYER_LOST;
+    if (this.onPlayerLost) {
+      this.onPlayerLost();
+    }
+  }
+
+  _setPlayerWonEndgame() {
+    this._state.endgame = RSGame.PLAYER_WON;
+    if (this.onPlayerWon) {
+      this.onPlayerWon();
+    }
   }
 }
 
