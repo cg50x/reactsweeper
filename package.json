@@ -1,5 +1,6 @@
 {
   "name": "react-minesweeper",
+  "homepage": "https://chrisguevara.com/reactsweeper",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
